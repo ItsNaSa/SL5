@@ -1,0 +1,4 @@
+	start	200	
+	moveras	areg	a
+	movem	breg	b
+label1	abc	cyz
