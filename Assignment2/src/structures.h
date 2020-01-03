@@ -11,8 +11,8 @@
 #include <string.h>
 
 struct symtab{
-	char symbol[5];
-	int add,length;
+	char symbol[10];
+	int address,length;
 };
 
 struct littab{
@@ -23,12 +23,12 @@ struct littab{
 char pooltab[20];
 
 struct mottab{
-	char mnemonic_code[5],class[2];
+	char mnemonic_code[10],class[3];
 	int machine_code,length;
 };
 
 struct pottab{
-	char pseudo_opcode[6],class[2];
+	char pseudo_opcode[10],class[3];
 	int inter_machine_code;
 };
 
@@ -38,7 +38,7 @@ struct ic{
 };
 
 struct table{
-	char label[10],mnemonic_code[5],op1[10],op2[10];
+	char label[10],mnemonic_code[10],op1[10],op2[10];
 };
 
 struct registers{
