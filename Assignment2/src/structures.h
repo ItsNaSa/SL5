@@ -10,6 +10,7 @@
 #define SIZE 99
 #include <string.h>
 
+//structure for symbol table
 struct symtab{
 	char symbol[10];
 	int address,length;
@@ -20,8 +21,9 @@ struct littab{
 	int add;
 };
 
-char pooltab[20];
+char *pooltab[20];
 
+//Operation code table (Mnemonic opcode table)
 struct mottab{
 	char mnemonic_code[10],class[3];
 	int machine_code,length;
@@ -33,12 +35,12 @@ struct pottab{
 };
 
 struct ic{
-	char class_code[20];
-	int reg_no,sr_no;
-};
-
-struct table{
-	char label[10],mnemonic_code[10],op1[10],op2[10];
+	char class[3],regi[2],table_name[2];	//class = AD,IS, DL, etc., regi = registers, table_name = literals or symbols. constant for DL
+	
+	char constant_size[4], constant;  //for (C '3')
+	int code;	//code means code of class eg. (AD 01)
+	int reg_no,sr_no;	//reg_no = register number, sr_no = serial number in a table(literal or symbol)
+	int lc1,displacement; 	//for (202+6)
 };
 
 struct registers{

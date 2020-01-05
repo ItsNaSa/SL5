@@ -13,11 +13,22 @@
 
 #include "structures.h"
 #define MAXCHAR 100
-struct mottab mtab[14];
-struct pottab ptab[5];
-struct symtab stab[15];
+struct mottab mtab[14];	//mnemonic opcode table
+struct pottab ptab[5];	//pseudo opcode table
+struct symtab stab[30];
+struct littab ltab[10];
+int size_of_mottab = 13;
 struct registers reg[4];
 int LC = 0;
+
+int check_mottab(char token[10]){
+	for(int i=0;i<size_of_mottab;i++){
+		if(strcmp(mtab[i].mnemonic_code,token) == 0){
+			return i;
+		}
+	}
+	return -1;
+}
 
 int check_symtab(char token[10], int *number){
 	int n = *number;
@@ -30,17 +41,19 @@ int check_symtab(char token[10], int *number){
 }
 
 void create_IC(char *tokens[4],int *n){
-	char this_label[10];
 	int location = 0;
 	int this_address;
+	struct ic intermediate;
+	int this_code;	//the opcode of the current 
+	FILE *fp;	//for insertion of Intermediate code
+
 	//step 2A
-	//if label is present
+	//if label is present, enter the pair (symbol, LC) into symbol table
 	if(strcmp(tokens[0],"-") != 0){
-		strcpy(this_label,tokens[0]);
 		//if symbol is already present in the symbol table
-		location = check_symtab(this_label,n);
-		if(location > (-1)){
-			stab[location].address = LC;
+		location = check_symtab(tokens[0],n);
+		if(location > (-1)){	//if already present,
+			stab[location].address = LC;		//update the address
 			//s[location].length = tokens[2];	//possible error
 		}
 		else{	//if symbol is not found, add it to the symbol table
@@ -48,9 +61,8 @@ void create_IC(char *tokens[4],int *n){
 			stab[*n].address = LC;
 			(*n)++;
 		}
-		//if next is Mnemonic, go to step 2F
 
-		//		step 2D - If EQU is found, then
+		//step 2D - If EQU is found, then
 		if(strcmp(tokens[1],"EQU") == 0){
 			//checks for the address of operand 1
 			location = check_symtab(tokens[2],n);
@@ -59,22 +71,45 @@ void create_IC(char *tokens[4],int *n){
 			location = check_symtab(tokens[0],n);
 			stab[location].address = this_address;
 		}
-
 	}
-////	step 2B
-//	if(strcmp(tokens[1],"LTORG")){
-//
-//	}
-////	step 2C
-////	if start or origin statement
-//	if(strcmp(tokens[1],"START")==0 || strcmp(tokens[1],"ORIGIN")==0){
-//		LC = atoi(tokens[2]);
-//	}
-////	step 2E
-////	if a declaration statement is found,
-//	if(strcmp(tokens[1],"DS")==0 || strcmp(tokens[1],"DC")){
-//
-//	}
+//	step 2B
+	if(strcmp(tokens[1],"LTORG")){
+		step2B();
+	}
+//	step 2C
+//	if start or origin statement
+	if(strcmp(tokens[1],"START")==0 || strcmp(tokens[1],"ORIGIN")==0){
+		LC = atoi(tokens[2]);
+	}
+//	step 2E
+//	if a declaration statement is found,
+	if(strcmp(tokens[1],"DS")==0 || strcmp(tokens[1],"DC")){
+		fp = fopen("inter_code.txt","a");
+		if(strcmp(tokens[1],"DC")==0){
+			strcpy(intermediate.class,"DL");
+			intermediate.code = 1;
+			intermediate.constant = "C";
+			strcpy(intermediate.constant_size,tokens[2]);
+			LC = LC + 1;
+		}
+		else
+		{
+			strcpy(intermediate.class,"DL");
+			intermediate.code = 2;
+			int size = atoi(tokens[2]);
+				location = check_symtab(tokens[0],n);
+				stab[location].length = size;
+				intermediate.constant = "C";
+			strcpy(intermediate.constant_size,size);
+			LC = LC+size;
+
+		}
+		fprintf(fp,"%s-%d-%s-%s\n",intermediate.class,intermediate.code,intermediate.constant,intermediate.constant_size);
+		fclose(fp);
+	}
+	
+	//if next is Mnemonic, go to step 2F
+	step2F(tokens);
 //	//end is encountered
 //
 printf("\n\n\nEnd of IC function\n\n\n");
