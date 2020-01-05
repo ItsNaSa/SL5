@@ -102,4 +102,43 @@ void init(struct mottab m[14],struct pottab p[13],struct registers r[4]){
 	r[3].reg_code = 4;
 }
 
+int check_literal(char *a){
+	if(*(a) == "="){
+			if(*(++a)=="'" ){
+				if(*(++(++a))=="'"){
+					return 1;
+				}
+			}
+		}
+	return 0;
+}
+
+int check_mottab(char token[10]){
+	for(int i=0;i<size_of_mottab;i++){
+		if(strcmp(mtab[i].mnemonic_code,token) == 0){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int check_register(char *a){
+	for(int i = 0 ;i<size_of_reg;i++){
+		if(strcmp(reg[i].reg_name,a) == 0){
+			return reg[i].reg_code;
+		}
+	}
+	return 0;
+}
+
+int check_symtab(char token[10], int *number){
+	int n = *number;
+	for(int i = 0 ;i< n;i++){
+		if(strcmp(stab[i].symbol,token)==0){
+			return i;
+		}
+	}
+	return (-1);
+}
+
 #endif /* STRUCTURES_H_ */

@@ -17,27 +17,52 @@ struct mottab mtab[14];	//mnemonic opcode table
 struct pottab ptab[5];	//pseudo opcode table
 struct symtab stab[30];
 struct littab ltab[10];
-int size_of_mottab = 13;
 struct registers reg[4];
+int size_of_mottab = 13;
+int size_of_littab = 0;
+int size_of_reg = 4;
 int LC = 0;
 
-int check_mottab(char token[10]){
-	for(int i=0;i<size_of_mottab;i++){
-		if(strcmp(mtab[i].mnemonic_code,token) == 0){
-			return i;
-		}
-	}
-	return -1;
+
+//called when LTORG is found
+void step2B(){
+	//TODO add the code for step2B
 }
 
-int check_symtab(char token[10], int *number){
-	int n = *number;
-	for(int i = 0 ;i< n;i++){
-		if(strcmp(stab[i].symbol,token)==0){
-			return i;
-		}
+//called when mnemonic is found
+int step2F(char *tokens[4]){
+	int location = -1;
+	int code;
+	char *temp = tokens[2];
+	char *temp2 = tokens[3];
+	char this_literal[5];
+	location = check_mottab(tokens[1]);
+	if(location == -1)
+		return -1;
+	else
+		code = mtab[location].machine_code;
+	//check if literal
+	//TODO check for both the operands
+	if(check_literal(*temp2)){
+		strcpy(ltab[size_of_littab].literal,tokens[3]);	//insert the literal in the literal table
+		size_of_littab++;
+		//TODO add the code to create the (intermediate code) if literal is found
 	}
-	return (-1);
+	//check if register
+	if(check_register(*temp) != 0){
+		//TODO create intermediate code if register is found
+	}
+
+	//check if symbol
+	if((location=check_symtab(*temp)) > -1){
+		//TODO generate IC if a symbol is there
+		LC += stab[location].length;
+	}
+	else{
+		//TODO add the entry in the symbol table
+	}
+
+
 }
 
 void create_IC(char *tokens[4],int *n){
@@ -47,13 +72,21 @@ void create_IC(char *tokens[4],int *n){
 	int this_code;	//the opcode of the current 
 	FILE *fp;	//for insertion of Intermediate code
 
+	//	step 2C
+	//	if start or origin statement
+	//TODO What to do of ORIGIN LOOP1 + 9
+	if(strcmp(tokens[1],"START")==0 || strcmp(tokens[1],"ORIGIN")==0){
+		LC = atoi(tokens[2]);
+	}
+
 	//step 2A
-	//if label is present, enter the pair (symbol, LC) into symbol table
+	//if label is present, update the pair (symbol, LC) into symbol table
 	if(strcmp(tokens[0],"-") != 0){
 		//if symbol is already present in the symbol table
 		location = check_symtab(tokens[0],n);
 		if(location > (-1)){	//if already present,
 			stab[location].address = LC;		//update the address
+			//TODO check the next line
 			//s[location].length = tokens[2];	//possible error
 		}
 		else{	//if symbol is not found, add it to the symbol table
@@ -71,16 +104,16 @@ void create_IC(char *tokens[4],int *n){
 			location = check_symtab(tokens[0],n);
 			stab[location].address = this_address;
 		}
+		//if next is a Mnemonic
+		else if(check_mottab(tokens[1]) > -1){
+			step2F(tokens);
+		}
 	}
 //	step 2B
 	if(strcmp(tokens[1],"LTORG")){
 		step2B();
 	}
-//	step 2C
-//	if start or origin statement
-	if(strcmp(tokens[1],"START")==0 || strcmp(tokens[1],"ORIGIN")==0){
-		LC = atoi(tokens[2]);
-	}
+
 //	step 2E
 //	if a declaration statement is found,
 	if(strcmp(tokens[1],"DS")==0 || strcmp(tokens[1],"DC")){
@@ -108,7 +141,7 @@ void create_IC(char *tokens[4],int *n){
 		fclose(fp);
 	}
 	
-	//if next is Mnemonic, go to step 2F
+	//if Mnemonic, go to step 2F
 	step2F(tokens);
 //	//end is encountered
 //
