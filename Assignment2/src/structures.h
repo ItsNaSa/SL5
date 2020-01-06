@@ -23,19 +23,10 @@ struct littab{
 	int add;
 };
 
-struct pooltab{
-	int index,start;
-};
-
 //Operation code table (Mnemonic opcode table)
 struct mottab{
 	char mnemonic_code[10],class[3];
 	int machine_code,length;
-};
-
-struct pottab{
-	char pseudo_opcode[10],class[3];
-	int inter_machine_code;
 };
 
 struct ic{
@@ -53,7 +44,22 @@ struct registers{
 	int reg_code;
 };
 
-void init(struct mottab m[14],struct pottab p[13],struct registers r[4]){
+//referenced tables
+struct mottab mtab[14];	//mnemonic opcode table
+struct registers reg[4];	//registers
+
+//to be created tables
+struct symtab stab[30];	//symbol table
+struct littab ltab[10];	//literal table
+struct ic intermediateCode[25];	//intermediate code
+
+int LC = 0;
+int PTP=0,LTP=0,STP=0;	//pool table pointer, Literal table pointer, Symbol table pointer
+int ICP=0;	//intermediate code pointer
+char *words[5];
+int pooltab[10];
+
+void init(struct mottab m[14],struct registers r[4]){
 	//initialize machine code, class and length
 	for(int i = 0;i<11;i++){
 		strcpy(m[i].class,"IS");
@@ -90,10 +96,9 @@ void init(struct mottab m[14],struct pottab p[13],struct registers r[4]){
 	}
 
 	strcpy(m[13].mnemonic_code,"START");
-	strcmy(m[14].mnemonic_code,"END");
-	strcmy(m[15].mnemonic_code,"LTORG");
-	strcmy(m[16].mnemonic_code,"ORIGIN");
-	strcmy(m[17].mnemonic_code,"EQU");
+	strcpy(m[14].mnemonic_code,"END");
+	strcpy(m[15].mnemonic_code,"LTORG");
+	strcpy(m[17].mnemonic_code,"EQU");
 
 	//Initialization of Registers
 	strcpy(r[0].reg_name,"AREG");
@@ -114,6 +119,13 @@ int check_mottab(char token[10]){
 		}
 	}
 	return -1;
+}
+
+void set_literal_tab(int lit_id,char lit_name[20],int lit_adr){
+	ltab[LTP].index = lit_id;
+	strcpy(ltab[LTP].literal,lit_name);
+	ltab[LTP].add = lit_adr;
+	LTP++;
 }
 
 // checks registers Table, returns register code if found, else returns 0
@@ -161,6 +173,20 @@ int isLiteral(char* curWord)
 		return 1;
 	}
 	return 0;
+}
+
+void  update_literal_table()
+{
+	int temp = pooltab[PTP];
+	temp--;
+	int i;
+	for(i=temp;i<LTP;i++)
+	{
+		ltab[i].add = LC;
+		LC = LC+1;
+	}
+	PTP++;
+	pooltab[PTP] = LTP+1;
 }
 
 //print functions
