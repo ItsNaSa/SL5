@@ -1,4 +1,0 @@
-A	DS	2
-B	DC	"3"
-A	DS	7
-LOOP1	EQU	12

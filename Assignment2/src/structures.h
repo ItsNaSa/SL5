@@ -1,8 +1,8 @@
 /*
  * structures.h
  *
- *  Created on: 31-Dec-2019
- *      Author: pict
+ *  Created on: 06-Jan-2020
+ *      Author: krish
  */
 
 #ifndef STRUCTURES_H_
@@ -12,16 +12,20 @@
 
 //structure for symbol table
 struct symtab{
+	int index;
 	char symbol[10];
-	int address,length;
+	int address,size;
 };
 
 struct littab{
+	int index;
 	char literal[10];
 	int add;
 };
 
-char *pooltab[20];
+struct pooltab{
+	int index,start;
+};
 
 //Operation code table (Mnemonic opcode table)
 struct mottab{
@@ -35,12 +39,13 @@ struct pottab{
 };
 
 struct ic{
-	char class[3],regi[2],table_name[2];	//class = AD,IS, DL, etc., regi = registers, table_name = literals or symbols. constant for DL
-	
-	char constant_size[4], constant;  //for (C '3')
-	int code;	//code means code of class eg. (AD 01)
-	int reg_no,sr_no;	//reg_no = register number, sr_no = serial number in a table(literal or symbol)
-	int lc1,displacement; 	//for (202+6)
+	int first;
+	char second[4];
+	int third;
+    char fourth[4];
+	int fifth;
+	char sixth[4];
+	int seventh;
 };
 
 struct registers{
@@ -79,17 +84,16 @@ void init(struct mottab m[14],struct pottab p[13],struct registers r[4]){
 	strcpy(m[11].mnemonic_code,"DC");
 	strcpy(m[12].mnemonic_code,"DS");
 
-	//initialization of Pseudo-opcode table
 	for(int i = 0 ; i < 5;i++){
-		strcpy(p[i].class,"AD");	//assembler directive
-		p[i].inter_machine_code = i+1;
+		strcpy(m[i].class,"AD");	//assembler directive
+		m[i].machine_code = i+1;
 	}
 
-	strcpy(p[0].pseudo_opcode,"START");
-	strcpy(p[1].pseudo_opcode,"END");
-	strcpy(p[2].pseudo_opcode,"LTORG");
-	strcpy(p[3].pseudo_opcode,"ORIGIN");
-	strcpy(p[4].pseudo_opcode,"EQU");
+	strcpy(m[13].mnemonic_code,"START");
+	strcmy(m[14].mnemonic_code,"END");
+	strcmy(m[15].mnemonic_code,"LTORG");
+	strcmy(m[16].mnemonic_code,"ORIGIN");
+	strcmy(m[17].mnemonic_code,"EQU");
 
 	//Initialization of Registers
 	strcpy(r[0].reg_name,"AREG");
@@ -102,19 +106,9 @@ void init(struct mottab m[14],struct pottab p[13],struct registers r[4]){
 	r[3].reg_code = 4;
 }
 
-int check_literal(char *a){
-	if(*(a) == "="){
-			if(*(++a)=="'" ){
-				if(*(++(++a))=="'"){
-					return 1;
-				}
-			}
-		}
-	return 0;
-}
-
+// checks MOT Table, returns location if found, else returns -1
 int check_mottab(char token[10]){
-	for(int i=0;i<size_of_mottab;i++){
+	for(int i=0;i<14;i++){
 		if(strcmp(mtab[i].mnemonic_code,token) == 0){
 			return i;
 		}
@@ -122,8 +116,9 @@ int check_mottab(char token[10]){
 	return -1;
 }
 
+// checks registers Table, returns register code if found, else returns 0
 int check_register(char *a){
-	for(int i = 0 ;i<size_of_reg;i++){
+	for(int i = 0 ;i<4;i++){
 		if(strcmp(reg[i].reg_name,a) == 0){
 			return reg[i].reg_code;
 		}
@@ -131,14 +126,79 @@ int check_register(char *a){
 	return 0;
 }
 
-int check_symtab(char token[10], int *number){
-	int n = *number;
-	for(int i = 0 ;i< n;i++){
+// checks symbol Table, returns location if found, else returns -1
+int check_symtab(char token[10]){
+	for(int i = 0 ;i< STP;i++){
 		if(strcmp(stab[i].symbol,token)==0){
 			return i;
 		}
 	}
 	return (-1);
 }
+
+//checking functions
+int isLiteral(char* curWord)
+{
+	int len = strlen(curWord);
+	printf("\nLit : %s\n",curWord);
+	printf("\nLength of Literal : %d\n",len);
+	char temp;
+	int i = 0,check;
+	check = -1;
+
+	if(curWord[0] == '=' && curWord[1] == '\'' && curWord[len-1] == '\'')
+	{
+		for(i=0;i<len-3;i++)
+		{
+			temp = (int)curWord[i+2];
+			check = isdigit(temp);
+			if(check == 0)
+			{
+				return 0;
+			}
+		}
+
+		return 1;
+	}
+	return 0;
+}
+
+//print functions
+void printSYMTAB()
+{
+	int i;
+	printf("\n******************** SYMBOL TABLE **********************\n");
+	printf("\nSym-Id  Sym-Name      Sym-Adr    Sym-Size   \n");
+	printf("\n********************************************************\n");
+	for(i=0;i<STP;i++)
+	{
+		printf("%-8d",stab[i].index);
+		printf("%-14s",stab[i].symbol);
+		printf("%-11d",stab[i].address);
+		printf("%-11s",stab[i].size);
+		printf("\n");
+	}
+	printf("\n--------------------------------------------------------\n");
+}
+
+void printLITTAB()
+{
+	int i;
+	printf("\n******************** LITERAL TABLE **********\n");
+	printf("\nLiteral-Id  Literal-Name      Literal-Adr    \n");
+	printf("\n*********************************************\n");
+	for(i=0;i<LTP;i++)
+	{
+		printf("%-12d",ltab[i].index);
+		printf("%-18s",ltab[i].literal);
+		printf("%-15d",ltab[i].add);
+		printf("\n");
+	}
+	printf("\n--------------------------------------------------------\n");
+}
+
+
+#endif /* STRUCTURES_H_ */
+
 
 #endif /* STRUCTURES_H_ */

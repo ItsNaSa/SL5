@@ -1,183 +1,215 @@
 /*
  ============================================================================
- Name        : Assignment2.c
+ Name        : Assignment2New.c
  Author      : 
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
-//check line 32,40
+
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "structures.h"
-#define MAXCHAR 100
+#define MAXSIZE 99
+//referenced tables
 struct mottab mtab[14];	//mnemonic opcode table
 struct pottab ptab[5];	//pseudo opcode table
-struct symtab stab[30];
-struct littab ltab[10];
-struct registers reg[4];
-int size_of_mottab = 13;
-int size_of_littab = 0;
-int size_of_reg = 4;
+struct registers reg[4];	//registers
+
+//to be created tables
+struct symtab stab[30];	//symbol table
+struct littab ltab[10];	//literal table
+struct pooltab pooltab[10];	//pool table
+struct ic intermediateCode[25];	//intermediate code
+
 int LC = 0;
+int PTP=0,LTP=0,STP=0;	//pool table pointer, Literal table pointer, Symbol table pointer
+int ICP=0;	//intermediate code pointer
+char *words[5];
 
-
-//called when LTORG is found
-void step2B(){
-	//TODO add the code for step2B
+void set_literal_tab(int lit_id,char lit_name[20],int lit_adr){
+	ltab[LTP].index = lit_id;
+	strcpy(ltab[LTP].literal,lit_name);
+	ltab[LTP].add = lit_adr;
+	LTP++;
 }
 
-//called when mnemonic is found
-int step2F(char *tokens[4]){
+void label_found(){
 	int location = -1;
+	if((location=check_symtab(words[0])) > (-1)){	//if label found
+		stab[location].address = LC;
+	}
+	else{	//else insert into the table
+		stab[STP].index = STP+1;
+		strcpy(stab[STP].symbol,first);
+		stab[STP].address = LC;
+		STP++;
+	}
+}
+
+void start_found(){
 	int code;
-	char *temp = tokens[2];
-	char *temp2 = tokens[3];
-	char this_literal[5];
-	location = check_mottab(tokens[1]);
-	if(location == -1)
-		return -1;
-	else
-		code = mtab[location].machine_code;
-	//check if literal
-	//TODO check for both the operands
-	if(check_literal(*temp2)){
-		strcpy(ltab[size_of_littab].literal,tokens[3]);	//insert the literal in the literal table
-		size_of_littab++;
-		//TODO add the code to create the (intermediate code) if literal is found
+	if((code=check_ptab(words[1])) > -1)
+		printf("(AD %d)",code);
+	//if operand one is empty
+	if(strcmp(words[2],"-")!=0){
+		int address;
+		sscanf(words[2],"%d",&address);	//convert address to integer form
+		LC = address;	//Assign the operand one to LC
+		printf(" (C %d)",LC);
 	}
-	//check if register
-	if(check_register(*temp) != 0){
-		//TODO create intermediate code if register is found
-	}
-
-	//check if symbol
-	if((location=check_symtab(*temp)) > -1){
-		//TODO generate IC if a symbol is there
-		LC += stab[location].length;
-	}
-	else{
-		//TODO add the entry in the symbol table
-	}
-
-
+	strcpy(intermediateCode[ICP].second,"AD");	//create the intermediate code
+	intermediateCode[ICP].third=code;
+	strcpy(intermediateCode[ICP].sixth,"C");
+	intermediateCode[ICP].seventh=LC;
 }
 
-void create_IC(char *tokens[4],int *n){
-	int location = 0;
-	int this_address;
-	struct ic intermediate;
-	int this_code;	//the opcode of the current 
-	FILE *fp;	//for insertion of Intermediate code
+void create_IC(int no_of_tokens){
+	FILE *fptr1 = NULL;
+	int label_index;
+	int flag;
+	int reg_no;
+	int temp,symbol_index;
+	int no_of_operands;
+	char *mnemonicCode;
+	char machine_code_temp[10];
+	fptr1 = fopen("intermediateCode.txt","a");
+		int location = -1;
 
-	//	step 2C
-	//	if start or origin statement
-	//TODO What to do of ORIGIN LOOP1 + 9
-	if(strcmp(tokens[1],"START")==0 || strcmp(tokens[1],"ORIGIN")==0){
-		LC = atoi(tokens[2]);
-	}
-
-	//step 2A
-	//if label is present, update the pair (symbol, LC) into symbol table
-	if(strcmp(tokens[0],"-") != 0){
-		//if symbol is already present in the symbol table
-		location = check_symtab(tokens[0],n);
-		if(location > (-1)){	//if already present,
-			stab[location].address = LC;		//update the address
-			//TODO check the next line
-			//s[location].length = tokens[2];	//possible error
-		}
-		else{	//if symbol is not found, add it to the symbol table
-			strcpy(stab[*n].symbol,tokens[0]);
-			stab[*n].address = LC;
-			(*n)++;
+		//if first word is not an Mnemonic -> it is a label
+		if((location = check_mottab(words[0])) == (-1)){	//if first word is not a Mnemonic
+			if((location = check_symtab(words[0])) == -1){	//if it also not in the symbol table
+				stab[STP].index = STP+1;					//insert into the symbol table
+				strcpy(stab[STP].symbol,words[0]);
+				stab[STP].address = LC;
+				STP++;
+			}
+			else{
+				//if present, update the address
+				label_index = location;
+				stab[label_index].address = LC;
+			}
+			//if word[0] is not in MOT, then words[1] is the mnemonic code -> flag = 1 means that words[1] is mnemonic code
+			flag = 1;
+			location = check_mottab(words[1]);	//address of the mnemonic code, as decided above
 		}
 
-		//step 2D - If EQU is found, then
-		if(strcmp(tokens[1],"EQU") == 0){
-			//checks for the address of operand 1
-			location = check_symtab(tokens[2],n);
-			this_address = stab[location].address;
-			//assign that address to the address of label
-			location = check_symtab(tokens[0],n);
-			stab[location].address = this_address;
+		//decide the mnemonic
+		if(flag == 0){
+			mnemonicCode = words[0];
 		}
-		//if next is a Mnemonic
-		else if(check_mottab(tokens[1]) > -1){
-			step2F(tokens);
+		else if(flag == 1){
+			mnemonicCode = words[1];
 		}
-	}
-//	step 2B
-	if(strcmp(tokens[1],"LTORG")){
-		step2B();
-	}
 
-//	step 2E
-//	if a declaration statement is found,
-	if(strcmp(tokens[1],"DS")==0 || strcmp(tokens[1],"DC")){
-		fp = fopen("inter_code.txt","a");
-		if(strcmp(tokens[1],"DC")==0){
-			strcpy(intermediate.class,"DL");
-			intermediate.code = 1;
-			intermediate.constant = "C";
-			strcpy(intermediate.constant_size,tokens[2]);
-			LC = LC + 1;
+		//check the mnemonic
+		if(strcmp(mnemonicCode,"START") == 0){	//if START statement
+			LC = atoi(words[flag+1]);
+			fprintf(fptr1,"(AD 1)(C %d)\n",LC);
 		}
-		else
+		else if(strcmp(mnemonicCode,"LTORG") == 0){	//if LTORG statement
+			update_literal_table();
+			fprintf(fptr1,"(AD 3)\n");
+		}
+		else if(strcmp(mnemonicCode,"ORIGIN") == 0){	//if ORIGIN
+			temp = check_symtab(words[flag+1]);
+			LC = stab[temp].address;
+			fprintf(fptr1,"(AD 4)(C %d)\n",LC);
+		}
+		else if(strcmp(mnemonicCode,"EQU")==0){	//if EQU
+			temp = check_symtab(words[0]);
+			stab[temp].address = stab[check_symtab(words[2])].address;
+			fprintf(fptr1,"(AD 5)\n");
+		}
+		else if(strcmp(mtab[location].class,"DL")==0){		//if class of mnemonic is DL
+			//DS
+			if(strcmp(mnemonicCode,"DS") == 0){
+				temp = atoi(words[flag+1]);
+				LC += temp;
+				strcpy(stab[label_index].size,words[flag+1]);	//label_index is location of label in the symbol table
+				fprintf(fptr1,"(DL 2)(C %d)\n",temp);
+			}
+			else if(strcmp(mnemonicCode,"DC")==0){
+				LC++;
+				strcpy(stab[label_index].size,words[flag+1]);
+				fprintf(fptr1,"(DL 1)(C %s)\n",words[flag+1]);
+			}
+		}
+		else if(strcmp(mtab[location].class,"IS")==0){	//if an imperative statement
+			no_of_operands = no_of_tokens-(flag+1);
+			strcpy(machine_code_temp,mtab[location].machine_code);
+			fprintf(fptr1,"(IS %s)",machine_code_temp);
+			for(int i = 0 ; i< no_of_operands;i++){
+				if(isLiteral(words[flag+i])){
+					set_literal_tab(LTP+1,words[flag+i],0);
+					if(LTP < 10){
+						fprintf(fptr1,"(L 0%d)",LTP);
+					}
+					else{
+						fprintf(fptr1,"(L %d)",LTP);
+					}
+				}
+				else if((reg_no = checkRegister(words[flag+i])) > 0){
+					fprintf(fptr1,"(R 0%d)",reg_no);
+
+				}
+				else{
+					symbol_index = check_symtab(words[flag+i]);
+					if(symbol_index == -1){
+						stab[STP].index = STP+1;					//insert into the symbol table
+						strcpy(stab[STP].symbol,words[flag+i]);
+						stab[STP].address = LC;
+						symbol_index = STP;
+						STP++;
+					}
+					if(symbol_index<10){
+						fprintf(fptr1,"(S 0%d)",symbol_index);
+					}
+					else{
+						fprintf(fptr1,"(S %d)",symbol_index);
+					}
+				}
+			}
+			fprintf(fptr1,"\n");
+			LC = LC+1;
+		}
+		else if(strcmp(mnemonicCode,"END")==0)
 		{
-			strcpy(intermediate.class,"DL");
-			intermediate.code = 2;
-			int size = atoi(tokens[2]);
-				location = check_symtab(tokens[0],n);
-				stab[location].length = size;
-				intermediate.constant = "C";
-			strcpy(intermediate.constant_size,size);
-			LC = LC+size;
-
+			updateLiteralTable();
+			fprintf(fptr1,"(AD 02)\n");
+			LC = LC+1;
 		}
-		fprintf(fp,"%s-%d-%s-%s\n",intermediate.class,intermediate.code,intermediate.constant,intermediate.constant_size);
-		fclose(fp);
-	}
-	
-	//if Mnemonic, go to step 2F
-	step2F(tokens);
-//	//end is encountered
-//
-printf("\n\n\nEnd of IC function\n\n\n");
+		printf("\nLC : %d\n",LC);
+		printf("\nSTP : %d\n",STP);
+		printf("\nLTP : %d\n",LTP);
+		printf("\nPTP : %d\n",PTP);
+		printSYMTAB();
+		printLITTAB();
+	fclose(fptr1);
 }
 
-int main(int argc,char *argv[]) {
+int main(int argc, char *argv[]) {
 	init(mtab,ptab,reg);
-	char str[100];
-	char *tokens[4];
-	char *token;
-	int i;
-	int end_found = 0;
-	int number_of_symbols=0;
-
 	FILE *input_file = NULL;
-	input_file = fopen(argv[1],"r");	//argv[1] is ALP code file
+	int i;
 
-	while (fgets(str, MAXCHAR, input_file) != NULL){
-		tokens[0]=tokens[1]=tokens[2]=tokens[3]= "\0";
-		token = strtok(str,"\t");
+	FILE *fptr1 = NULL;
+	fptr1 = fopen("intermediateCode.txt","w");
+	fclode(fptr1);
+
+	input_file = fopen(argv[1],"r");	//argv[1] is ALP code file
+	char str[99],token[15];
+	while (fgets(str, MAXSIZE, input_file) != NULL){
+		words[0]=words[1]=words[2]=words[3]= "\0";
+		words = strtok(str,"\t");
 		i = 0;
 		while(token != NULL){
-			tokens[i] = token;
+			words[i] = token;
 			i++;
-			// printf("%s\n",token);
 			token = strtok(NULL,"\t");
 	  	}
-		// printf("0. %s, 1. %s, 2. %s, 3. %s\n",tokens[0],tokens[1],tokens[2],tokens[3]);
-		create_IC(tokens,&number_of_symbols);
+		create_IC(i);
 	}
-	printf("\nBAck to main function\n");
-	for(int i = 0;i<number_of_symbols;i++){
-		printf("Symbol = %s, Address = %d, Length = %d\n",stab[i].symbol,stab[i].address,stab[i].length);
-	}
-	
-	return EXIT_SUCCESS;
+	fclose(input_file);
 }
-
