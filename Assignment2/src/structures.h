@@ -45,7 +45,7 @@ struct registers{
 };
 
 //referenced tables
-struct mottab mtab[14];	//mnemonic opcode table
+struct mottab mtab[18];	//mnemonic opcode table
 struct registers reg[4];	//registers
 
 //to be created tables
@@ -67,13 +67,13 @@ void init(struct mottab m[14],struct registers r[4]){
 		m[i].length = 2;
 	}
 
-	strcpy(m[12].class,"DL");
-	m[12].machine_code = 12;
-	m[12].length = 1;
+	strcpy(m[11].class,"DL");
+	m[11].machine_code = 12;
+	m[11].length = 1;
 
-	strcpy(m[13].class,"DL");
-	m[13].machine_code =13;
-	m[13].length = 99;
+	strcpy(m[12].class,"DL");
+	m[12].machine_code =13;
+	m[12].length = 99;
 
 	//initializes mnemonic code
 	strcpy(m[0].mnemonic_code,"STOP");
@@ -90,9 +90,9 @@ void init(struct mottab m[14],struct registers r[4]){
 	strcpy(m[11].mnemonic_code,"DC");
 	strcpy(m[12].mnemonic_code,"DS");
 
-	for(int i = 0 ; i < 5;i++){
+	for(int i = 13 ; i < 18;i++){
 		strcpy(m[i].class,"AD");	//assembler directive
-		m[i].machine_code = i+1;
+		m[i].machine_code = i-12;
 	}
 
 	strcpy(m[13].mnemonic_code,"START");
@@ -113,7 +113,7 @@ void init(struct mottab m[14],struct registers r[4]){
 
 // checks MOT Table, returns location if found, else returns -1
 int check_mottab(char token[10]){
-	for(int i=0;i<14;i++){
+	for(int i=0;i<18;i++){
 		if(strcmp(mtab[i].mnemonic_code,token) == 0){
 			return i;
 		}
@@ -140,6 +140,7 @@ int check_register(char *a){
 
 // checks symbol Table, returns location if found, else returns -1
 int check_symtab(char token[10]){
+	printf("words : %s\n",token);
 	for(int i = 0 ;i< STP;i++){
 		if(strcmp(stab[i].symbol,token)==0){
 			return i;
@@ -201,7 +202,7 @@ void printSYMTAB()
 		printf("%-8d",stab[i].index);
 		printf("%-14s",stab[i].symbol);
 		printf("%-11d",stab[i].address);
-		printf("%-11s",stab[i].size);
+		printf("%-11d",stab[i].size);
 		printf("\n");
 	}
 	printf("\n--------------------------------------------------------\n");
@@ -226,5 +227,3 @@ void printLITTAB()
 
 #endif /* STRUCTURES_H_ */
 
-
-#endif /* STRUCTURES_H_ */

@@ -42,6 +42,7 @@ void create_IC(int no_of_tokens){
 			//if word[0] is not in MOT, then words[1] is the mnemonic code -> flag = 1 means that words[1] is mnemonic code
 			flag = 1;
 			location = check_mottab(words[1]);	//address of the mnemonic code, as decided above
+			printf("\nLOCATION OF WORD : %s is %d\n",words[1],location);
 		}
 
 		//decide the mnemonic
@@ -132,12 +133,12 @@ void create_IC(int no_of_tokens){
 			fprintf(fptr1,"(AD 02)\n");
 			LC = LC+1;
 		}
-		printf("\nLC : %d\n",LC);
-		printf("\nSTP : %d\n",STP);
-		printf("\nLTP : %d\n",LTP);
-		printf("\nPTP : %d\n",PTP);
-		printSYMTAB();
-		printLITTAB();
+	//	printf("\nLC : %d\n",LC);
+	//	printf("\nSTP : %d\n",STP);
+	//	printf("\nLTP : %d\n",LTP);
+	//	printf("\nPTP : %d\n",PTP);
+	//	printSYMTAB();
+	//	printLITTAB();
 	fclose(fptr1);
 }
 
@@ -154,12 +155,12 @@ int main(int argc, char *argv[]) {
 	char str[99],*token;
 	while (fgets(str, MAXSIZE, input_file) != NULL){
 		words[0]=words[1]=words[2]=words[3]= "\0";
-		token = strtok(str,"\t");
+		token = strtok(str," ");
 		i = 0;
 		while(token != NULL){
 			words[i] = token;
 			i++;
-			token = strtok(NULL,"\t");
+			token = strtok(NULL," ");
 	  	}
 		create_IC(i);
 	}
