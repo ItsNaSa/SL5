@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : Assignment2New.c
+ Name        : Assignment2.c
  Author      :
  Version     :
  Copyright   : Your copyright notice
@@ -17,18 +17,20 @@
 void create_IC(int no_of_tokens){
 	FILE *fptr1 = NULL;
 	int label_index;
-	int flag;
-	int reg_no;
-	int temp,symbol_index;
-	int no_of_operands;
-	char *mnemonicCode;
+	int flag=0;
+	int reg_no=0;
+	int temp=-1,symbol_index=-1;
+	int no_of_operands=0;
+	char *mnemonicCode=NULL;
 	int machine_code_temp;
 	fptr1 = fopen("intermediateCode.txt","a");
 		int location = -1;
 
 		//if first word is not an Mnemonic -> it is a label
 		if((location = check_mottab(words[0])) == (-1)){	//if first word is not a Mnemonic
+			printf("Word \"%s\" is not a Mnemonic\n",words[0]);
 			if((location = check_symtab(words[0])) == -1){	//if it also not in the symbol table
+				printf("Word \"%s\" is not a available Symbol\n",words[0]);
 				stab[STP].index = STP+1;					//insert into the symbol table
 				strcpy(stab[STP].symbol,words[0]);
 				stab[STP].address = LC;
@@ -44,7 +46,7 @@ void create_IC(int no_of_tokens){
 			location = check_mottab(words[1]);	//address of the mnemonic code, as decided above
 			printf("\nLOCATION OF WORD : %s is %d\n",words[1],location);
 		}
-
+	printf("FLAG IS %d \n",flag);
 		//decide the mnemonic
 		if(flag == 0){
 			mnemonicCode = words[0];
@@ -94,6 +96,7 @@ void create_IC(int no_of_tokens){
 			machine_code_temp = mtab[location].machine_code;
 			fprintf(fptr1,"(IS %d)",machine_code_temp);
 			for(int i = 0 ; i< no_of_operands;i++){
+			//check if literal, register or symbol
 				if(isLiteral(words[flag+i])){
 					set_literal_tab(LTP+1,words[flag+i],0);
 					if(LTP < 10){
@@ -109,6 +112,7 @@ void create_IC(int no_of_tokens){
 				}
 				else{
 					symbol_index = check_symtab(words[flag+i]);
+					printf("Symbol Index of %s is %d\n",words[flag+i],symbol_index);
 					if(symbol_index == -1){
 						stab[STP].index = STP+1;					//insert into the symbol table
 						strcpy(stab[STP].symbol,words[flag+i]);

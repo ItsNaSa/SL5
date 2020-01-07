@@ -9,6 +9,7 @@
 #define STRUCTURES_H_
 #define SIZE 99
 #include <string.h>
+#include <ctype.h>
 
 //structure for symbol table
 struct symtab{
@@ -96,9 +97,10 @@ void init(struct mottab m[14],struct registers r[4]){
 	}
 
 	strcpy(m[13].mnemonic_code,"START");
-	strcpy(m[14].mnemonic_code,"END");
+	strcpy(m[14].mnemonic_code,"END\n");
 	strcpy(m[15].mnemonic_code,"LTORG");
-	strcpy(m[17].mnemonic_code,"EQU");
+	strcpy(m[17].mnemonic_code,"ORIGIN");
+	strcpy(m[16].mnemonic_code,"EQU");
 
 	//Initialization of Registers
 	strcpy(r[0].reg_name,"AREG");
@@ -112,7 +114,8 @@ void init(struct mottab m[14],struct registers r[4]){
 }
 
 // checks MOT Table, returns location if found, else returns -1
-int check_mottab(char token[10]){
+int check_mottab(char *token){
+	printf("The length of the word %s is %ld\n",token,strlen(token));
 	for(int i=0;i<18;i++){
 		if(strcmp(mtab[i].mnemonic_code,token) == 0){
 			return i;
@@ -129,7 +132,8 @@ void set_literal_tab(int lit_id,char lit_name[20],int lit_adr){
 }
 
 // checks registers Table, returns register code if found, else returns 0
-int check_register(char *a){
+int check_register(char a[10]){
+
 	for(int i = 0 ;i<4;i++){
 		if(strcmp(reg[i].reg_name,a) == 0){
 			return reg[i].reg_code;
@@ -164,8 +168,8 @@ int isLiteral(char* curWord)
 		for(i=0;i<len-3;i++)
 		{
 			temp = (int)curWord[i+2];
-			check = isdigit(temp);
-			if(check == 0)
+			check = isdigit(temp);	
+			if(check == 0)	//not a numeric character => it is not a literal
 			{
 				return 0;
 			}
