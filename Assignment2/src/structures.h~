@@ -117,7 +117,7 @@ void init(struct mottab m[14],struct registers r[4]){
 int check_mottab(char *token){
 	printf("The length of the word %s is %ld\n",token,strlen(token));
 	for(int i=0;i<18;i++){
-		printf("mtab[i].mnemonic = \"%s\", token =\" %s\"\n",mtab[i].mnemonic_code,token);
+		printf("mtab[i].mnemonic = %s, token = %s\n",mtab[i].mnemonic_code,token);
 		if(strcmp(mtab[i].mnemonic_code,token) == 0){
 			return i;
 		}

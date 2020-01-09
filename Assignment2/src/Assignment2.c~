@@ -92,8 +92,8 @@ void create_IC(int no_of_tokens){
 			}
 		}
 		else if(strcmp(mtab[location].class,"IS")==0){	//if an imperative statement
-			no_of_operands = no_of_tokens- flag-1;
-			printf("No. of tokens is %d,No. of operands is %d\n",no_of_tokens,no_of_operands);
+			printf("No. of tokens is %d,No. of operands is %d\n",no_of_operands);
+			no_of_operands = no_of_tokens-(flag+1);
 			// strcpy(machine_code_temp,mtab[location].machine_code);
 			machine_code_temp = mtab[location].machine_code;
 			fprintf(fptr1,"(IS %d)",machine_code_temp);
