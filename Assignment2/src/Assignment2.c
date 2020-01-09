@@ -97,7 +97,10 @@ void create_IC(int no_of_tokens){
 			// strcpy(machine_code_temp,mtab[location].machine_code);
 			machine_code_temp = mtab[location].machine_code;
 			fprintf(fptr1,"(IS %d)",machine_code_temp);
-			for(int i = 0 ; i< no_of_operands;i++){
+			for(int i = 1 ; i<= no_of_operands;i++){
+				printf("Flag is %d, i is %d\n",flag,i);
+
+				printf("The word is now %s\n",words[flag+i]);
 			//check if literal, register or symbol
 				if(isLiteral(words[flag+i])){
 					set_literal_tab(LTP+1,words[flag+i],0);
