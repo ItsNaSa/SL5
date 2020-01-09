@@ -150,6 +150,7 @@ int main(int argc, char *argv[]) {
 	init(mtab,reg);
 	FILE *input_file = NULL;
 	int i;
+	int length;
 
 	FILE *fptr1 = NULL;
 	fptr1 = fopen("intermediateCode.txt","w");
@@ -162,6 +163,9 @@ int main(int argc, char *argv[]) {
 		token = strtok(str," ");
 		i = 0;
 		while(token != NULL){
+			length = strlen(token);
+			token[length+1] = "\0";
+			
 			words[i] = token;
 			i++;
 			token = strtok(NULL," ");
