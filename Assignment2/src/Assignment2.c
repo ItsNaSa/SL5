@@ -15,40 +15,39 @@
 #define MAXSIZE 99
 
 void create_IC(int no_of_tokens){
-	FILE *fptr1 = NULL;
+	FILE *fptr1 = NULL;	//for writing in the file
 	int label_index;
-	int flag=0;
+	int flag=0;	//for position of operands in line
 	int reg_no=0;
 	int temp=-1,symbol_index=-1;
 	int no_of_operands=0;
 	char *mnemonicCode=NULL;
 	int machine_code_temp;
+
 	fptr1 = fopen("intermediateCode.txt","a");
 		int location = -1;
-
 		//if first word is not an Mnemonic -> it is a label
-		if((location = check_mottab(words[0])) == (-1)){	//if first word is not a Mnemonic
-			printf("Word \"%s\" is not a Mnemonic\n",words[0]);
-			if((location = check_symtab(words[0])) == (-1)){	//if it also not in the symbol table
+		if((location = check_mottab(words[0])) == (-1)){	//if first word is not a Mnemonic -> check if a symbol
+			// printf("Word \"%s\" is not a Mnemonic\n",words[0]);
+			if((location = check_symtab(words[0])) == (-1)){	//if it also not in the symbol table -> add to the symbol table
 				printf("Word \"%s\" is not a available Symbol\n",words[0]);
 				stab[STP].index = STP+1;					//insert into the symbol table
 				strcpy(stab[STP].symbol,words[0]);
 				stab[STP].address = LC;
+				label_index = STP;
 				STP++;
 			}
 			else{
 				//if present, update the address
-				label_index = location;
+				label_index = location+1;
 				stab[label_index].address = LC;
 			}
 			//if word[0] is not in MOT => it is a symbol, then words[1] is the mnemonic code -> flag = 1 means that words[1] is mnemonic code
 			flag = 1;
 			location = check_mottab(words[1]);	//address of the mnemonic code, as decided above
-			printf("\nLOCATION OF WORD : %s is %d\n",words[1],location);
 		}	//end of mnemonic and symbol check
-	printf("FLAG IS %d \n",flag);
 		
-		//decide which is the mnemonic
+		//decide which word is the mnemonic
 		if(flag == 0){
 			mnemonicCode = words[0];
 		}
@@ -60,6 +59,7 @@ void create_IC(int no_of_tokens){
 		if(strcmp(mnemonicCode,"START") == 0){	//if START statement
 			LC = atoi(words[flag+1]);
 			fprintf(fptr1,"(AD 1)(C %d)\n",LC);
+			start_found = 1;
 		}
 		else if(strcmp(mnemonicCode,"LTORG") == 0){	//if LTORG statement
 			update_literal_table();
@@ -79,8 +79,10 @@ void create_IC(int no_of_tokens){
 			//DS
 			if(strcmp(mnemonicCode,"DS") == 0){
 				temp = atoi(words[flag+1]);
+				printf("DS encounterd.... Size of statement is %d\n",temp);
 				LC += temp;
-				// strcpy(stab[label_index].size,words[flag+1]);	//label_index is location of label in the symbol table
+				// strcpy(stab[label_index].size,words[flag+1]);
+				printf("DS : words[flag+1] = %s, label_index is %d\n",words[flag+1],label_index);	//label_index is location of label in the symbol table
 				sscanf(words[flag+1],"%d",&stab[label_index].size);
 				fprintf(fptr1,"(DL 2)(C %d)\n",temp);
 			}
@@ -141,13 +143,13 @@ void create_IC(int no_of_tokens){
 			update_literal_table();
 			fprintf(fptr1,"(AD 02)\n");
 			LC = LC+1;
+			end_found = 1;	//flag to check if END is there or not
 		}
 		printf("\nLC : %d\n",LC);
-		printf("\nSTP : %d\n",STP);
-		printf("\nLTP : %d\n",LTP);
-		printf("\nPTP : %d\n",PTP);
+		// printf("\nSTP : %d\n",STP);
 		printSYMTAB();
 		printLITTAB();
+		print_pooltab();
 	fclose(fptr1);
 }
 
@@ -178,6 +180,19 @@ int main(int argc, char *argv[]) {
 			token = strtok(NULL," ");
 	  	}
 		create_IC(i);
+	}
+	if(!start_found){
+		printf("Error!!! Program should contain START statement...!!! START TO THE PROGRAM NOT FOUND!!!!\n");
+		FILE* fptr1 = NULL;
+		remove("symtab.txt");
+		remove("littab.txt");
+		remove("pooltab.txt");
+	}
+	if(!end_found){
+		printf("Error!!! Program should contain END statement...!!! END NOT FOUND!!!!\n");
+		remove("symtab.txt");
+		remove("littab.txt");
+		remove("pooltab.txt");
 	}
 	fclose(input_file);
 }

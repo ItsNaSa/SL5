@@ -8,6 +8,7 @@
 #ifndef STRUCTURES_H_
 #define STRUCTURES_H_
 #define SIZE 99
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -199,8 +200,6 @@ void update_literal_table()
 //print functions
 void printSYMTAB()
 {
-	FILE *fptr = NULL;
-	fptr = fopen("symtab.txt","w");
 	int i;
 	printf("\n******************** SYMBOL TABLE **********************\n");
 	printf("\nSym-Id  Sym-Name      Sym-Adr    Sym-Size   \n");
@@ -212,16 +211,12 @@ void printSYMTAB()
 		printf("%-11d",stab[i].address);
 		printf("%-11d",stab[i].size);
 		printf("\n");
-		fprintf(fptr,"%d %s %d %d\n",stab[i].index,stab[i].symbol,stab[i].address,stab[i].size);
 	}
 	printf("\n--------------------------------------------------------\n");
-	fclose(fptr);
 }
 
 void printLITTAB()
 {
-	FILE *fptr = NULL;
-	fptr = fopen("littab.txt","w");
 	int i;
 	printf("\n******************** LITERAL TABLE **********\n");
 	printf("\nLiteral-Id  Literal-Name      Literal-Adr    \n");
@@ -232,25 +227,48 @@ void printLITTAB()
 		printf("%-18s",ltab[i].literal);
 		printf("%-15d",ltab[i].add);
 		printf("\n");
-		fprintf(fptr,"%d %s %d\n",ltab[i].index,ltab[i].literal,ltab[i].add);
 	}
 	printf("\n--------------------------------------------------------\n");
-	fclose(fptr);
+
 }
 
 void print_pooltab(){
-	FILE *fptr = NULL;
-	fptr = fopen("pooltab.txt","w");
 	printf("\n******POOLTAB******\n");
 	printf("\nCONTENT\n");
 	printf("\n*******************\n");
 	for(int i = 0 ; i< PTP;i++){
-		fprintf(fptr,"%d\n",pooltab[i]);
 		printf("%d\n",pooltab[i]);
 	}
 	printf("\n--------------------------------------------------------\n");
-	fclose(fptr);
 }
 
+void load_symtab(){
+	FILE *fptr1 = NULL;
+	fptr1 = fopen("symtab.txt","r");
+	while(fscanf(fptr1,"%d %s %d %d",&stab[STP].index,stab[STP].symbol,&stab[STP].address,&stab[STP].size) != EOF){
+		STP++;
+	}
+	fclose(fptr1);
+	//printSYMTAB();
+}
+
+void load_pooltab(){
+	FILE *fptr = NULL;
+	fptr = fopen("pooltab.txt","r");
+	while(fscanf(fptr,"%d",&pooltab[PTP]) != EOF){
+		PTP++;
+	}
+	//print_pooltab();
+}
+
+void load_littab(){
+	FILE *fptr = NULL;
+	fptr = fopen("littab.txt","r");
+	while(fscanf(fptr,"%d %s %d",&ltab[LTP].index,ltab[LTP].literal,&ltab[LTP].add) != EOF){
+		LTP++;
+	}
+	fclose(fptr);
+	//printLITTAB();
+}
 #endif /* STRUCTURES_H_ */
 
