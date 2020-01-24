@@ -1,0 +1,2 @@
+Put N queens on a NxN sized chess board, such that no two queens attack each other.
+Approach used :: Brute force

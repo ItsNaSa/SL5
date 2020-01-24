@@ -1,0 +1,3 @@
+Implementation of storage of n songs into m tapes.
+m tapes have lengths tending to infinity (any number of songs can be stored).
+Store the songs in such a way that each tape has minimum retrieval time.

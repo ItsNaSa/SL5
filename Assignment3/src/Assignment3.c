@@ -12,10 +12,12 @@
 #include <stdlib.h>
 #include "structures.h"
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	load_littab();
 	load_pooltab();
 	load_symtab();
+
+	create_machine_code();
 
 	return EXIT_SUCCESS;
 }

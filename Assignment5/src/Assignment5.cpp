@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "mergeSort.h"	//structure is defined in the header
-#define MAX 1000
+#define MAX 100
 using namespace std;
 
 int main() {
@@ -22,8 +22,8 @@ int main() {
 	cin>>n_of_songs;
 
 	for(int i = 0; i < n_of_songs; i++){
-		cout<<"Enter name of the song number "<<i+1<<" :: ";
-		cin>>songs[i].name;
+		// cout<<"Enter name of the song number "<<i+1<<" :: ";
+		// cin>>songs[i].name;
 		cout<<"Enter length of song number "<<i+1<<" :: ";
 		cin>>songs[i].length;
 		songs[i].song_number = i+1;
@@ -31,6 +31,6 @@ int main() {
 
 	mergeSort(songs,0,n_of_songs-1);
 	put_songs(songs,n_of_songs,tapes,n_of_tapes);
-	//TODO code for calculating the average time for each tape
+	show_tapes(n_of_songs,tapes,n_of_tapes);
 	return 0;
 }

@@ -1,0 +1,29 @@
+pict@pict-OptiPlex-5060:~/33140/Assignment5/src$ g++ Assignment5.cpp 
+pict@pict-OptiPlex-5060:~/33140/Assignment5/src$ ./a.out
+Enter number of tapes to be used :: 1
+Enter number of songs :: 4
+Enter length of song number 1 :: 1
+Enter length of song number 2 :: 2
+Enter length of song number 3 :: 3
+Enter length of song number 4 :: 4
+
+Song in tape 1 :: ( 1) ( 2) ( 3) ( 4)  || MRT :: 20 || Average Retrieval Time :: 5
+
+pict@pict-OptiPlex-5060:~/33140/Assignment5/src$ ./a.out
+Enter number of tapes to be used :: 3
+Enter number of songs :: 4
+Enter length of song number 1 :: 1
+Enter length of song number 2 :: 2
+Enter length of song number 3 :: 3
+Enter length of song number 4 :: 4
+
+Song in tape 1 :: ( 1) ( 4)  || MRT :: 6 || Average Retrieval Time :: 3
+
+
+Song in tape 2 :: ( 2)  || MRT :: 2 || Average Retrieval Time :: 2
+
+
+Song in tape 3 :: ( 3)  || MRT :: 3 || Average Retrieval Time :: 3
+
+pict@pict-OptiPlex-5060:~/33140/Assignment5/src$ 
+

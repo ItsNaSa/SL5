@@ -1,0 +1,3 @@
+Implementing Divide-and-conquer algorithm to find the minimum and maximum from a given list of numbers.
+Working :: Divide the array to its smallest sub-problems, calculate minimum and maximum of sub-problem and go on merging and comparing.
+Time complexity :: O(log N) 
