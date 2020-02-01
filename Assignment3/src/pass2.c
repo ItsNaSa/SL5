@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+
 struct symtab{
 	char symbol[10];
 	int add,length;
@@ -26,17 +27,17 @@ void disp(char *line)
 {
 	printf("hii");
 	int count=0;
-	char* token = strtok(line, "\t"); 
+	char* token = strtok(line, "\t");
 
 	char buff[20];
     while (token != NULL) {
-    	strcpy(buff,token); 
+    	strcpy(buff,token);
     	if(count==0)
     		sscanf(buff,"%d",&i_counter[ic_ptr].lc);
-    	
+
     	else if(count==1)
     		sscanf(buff,"%s",i_counter[ic_ptr].class_code);
-    	
+
     	else if(count==2)
     		sscanf(buff,"%d",&i_counter[ic_ptr].machine_code);
 
@@ -55,12 +56,12 @@ void disp(char *line)
 
     	else if(count==6)
     		sscanf(buff,"%d",&i_counter[ic_ptr].constant2);
-    
+
         count++;
         strcpy(buff,"NULL");
         printf("%s\n",token);
         token = strtok(NULL, "\t");
-    } 
+    }
     ic_ptr++;
 }
 
@@ -112,7 +113,7 @@ void copy_from_file()
 		 {
 		 	printf("%s\t%d\t%d\n",s[i].symbol,s[i].add,s[i].length);
 		 	i++;
-		 }	
+		 }
    	}
 	fclose(fptr);
 	i=0;
@@ -128,7 +129,7 @@ void copy_from_file()
 		 {
 		 	printf("%s\t%d\n",l[i].literal,l[i].add);
 		 	i++;
-		 }	
+		 }
    	}
 	fclose(fptr);
 	i=0;
@@ -144,7 +145,7 @@ void copy_from_file()
 		 {
 		 	printf("%d\n",pooltab[i]);
 		 	i++;
-		 }	
+		 }
    	}
 	fclose(fptr);
 
@@ -159,7 +160,7 @@ void copy_from_file()
 	}
 	else
 	{
-		while ((nread = getline(&line, &len, fptr)) != -1) 
+		while ((nread = getline(&line, &len, fptr)) != -1)
 		{
 			counter++;
            printf("\n\nRetrieved line %d of length %zu:",counter, nread);
