@@ -76,6 +76,7 @@ void put_songs(song song_list[],int n_of_songs,song tapes[][MAX],int n_of_tapes)
         if((song_list[i].length + current_length_in_tapes[i % n_of_tapes]) > max_length){
             cout<<"\n\nOVERFLOW OCCURED!!!!"<<endl<<endl;
             OVERFLOW_POSITION = i;
+            break;
         }
         else {
             if(i==0){
@@ -109,15 +110,15 @@ void show_tapes(song song_list[],int n_of_songs,song tapes[][MAX],int n_of_tapes
         cout<<endl;
     }
     //If overflow has occured
-    if(OVERFLOW_POSITION != (-1)){
-        cout<<"OverFlow occured from posistion "<<OVERFLOW_POSITION<<endl;
-        cout<<"SONGS THAT COULD NOT BE ENTERED :: "<<endl;
-        for(int i = OVERFLOW_POSITION;i<n_of_songs;i++){
-            cout<<i-OVERFLOW_POSITION+1<<"Name : "<<song_list[i].name<<", Length : "<<song_list[i].length<<", Song Number :: "<<song_list[i].song_number<<endl;
-        }
+    if(OVERFLOW_POSITION == (-1)){
+       cout<<"All songs were entered!"<<endl;
     }
     else{
-        cout<<"All songs were entered!"<<endl;
+        cout<<"OverFlow occured from position "<<OVERFLOW_POSITION<<endl;
+        cout<<"SONGS THAT COULD NOT BE ENTERED :: "<<endl;
+        for(int i = OVERFLOW_POSITION;i<n_of_songs;i++){
+            cout<<i-OVERFLOW_POSITION+1<<". Name : "<<song_list[i].name<<", Length : "<<song_list[i].length<<", Song Number :: "<<song_list[i].song_number<<endl;
+        }
     }
 }
 
