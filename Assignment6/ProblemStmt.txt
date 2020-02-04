@@ -1,0 +1,3 @@
+Assignment 6
+Bellman-Ford algorithm
+Dynamic programming approach to find the shortest path from source to each node.
