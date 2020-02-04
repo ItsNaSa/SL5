@@ -1,0 +1,32 @@
+pict@pict-OptiPlex-5060:~/33140/Assignment5B$ ./a.out
+Enter number of tapes to be used :: 3
+Enter max length of tape :: 5
+Enter number of songs :: 8
+Enter length of song number 1 :: 1
+Enter length of song number 2 :: 2
+Enter length of song number 3 :: 3
+Enter length of song number 4 :: 4
+Enter length of song number 5 :: 5
+Enter length of song number 6 :: 6
+Enter length of song number 7 :: 7
+Enter length of song number 8 :: 8
+
+
+OVERFLOW OCCURED!!!!
+
+
+Song in tape 1 :: ( 1) ( 4)  || MRT :: 6 || Average Retrieval Time :: 3
+
+
+Song in tape 2 :: ( 2)  || MRT :: 2 || Average Retrieval Time :: 2
+
+
+Song in tape 3 :: ( 3)  || MRT :: 3 || Average Retrieval Time :: 3
+
+OverFlow occured from position 4
+SONGS THAT COULD NOT BE ENTERED :: 
+1. Name : , Length : 5, Song Number :: 5
+2. Name : , Length : 6, Song Number :: 6
+3. Name : , Length : 7, Song Number :: 7
+4. Name : , Length : 8, Song Number :: 8
+
