@@ -1,28 +1,13 @@
 #include<stdio.h>
-
-typedef struct UST{
-    char symbol[10];
-    int index;
-}UST;
-
-typedef struct literal
-{
-    char literalString[50];
-    int index;
-}lit;
-
-typedef struct identifiers{
-    char identifierString[20];
-    int index;
-}idn;
-
-typedef struct terminals
-{
-    char terminalString[10];
-    int index;
-}trm;
+#include <string.h>
+#include "struct.h"
 
 int main(){
-    trm terminals[]
-    load_trm();
+    trn terminals[70];
+	UST uni_sym_tab[1500];
+	idn identifier_table[50];
+	lit literal_table[50];
+    printf("LOADING TERMINALS\n");
+    load_trn(terminals);
+	create_lexium(uni_sym_tab,terminals,identifier_table,literal_table);
 }
