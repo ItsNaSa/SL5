@@ -9,5 +9,5 @@ int main(){
 	lit literal_table[50];
     printf("LOADING TERMINALS\n");
     load_trn(terminals);
-	create_lexium(uni_sym_tab,terminals,identifier_table,literal_table);
+	tokenize(uni_sym_tab,terminals,identifier_table,literal_table);
 }

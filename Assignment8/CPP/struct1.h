@@ -1,5 +1,6 @@
-#include<iostream>
+#include <iostream>
 #include <string.h>
+#include <fstream>
 using namespace std;
 
 typedef struct UST{
@@ -32,21 +33,27 @@ int UST_PTR = 0;
 void load_trn(trn terminal_table[70]){
    int index1,i=0;
    char token[20];
-    FILE *fptr = fopen("terminaltable.txt","r");
+   fstream file1;
+   file1.open("terminaltable.txt",ios::in);
     printf("Reading file\n");
-    while (!feof(fptr))
+    while (!file1.eof())
     {
-        fscanf(fptr,"%s %d",token,&index1);
+        file1>>token;
 		terminal_table[i].index = index1;
         strcpy(terminal_table[i].terminalString,token);
         i++;
     }
     printf("Value of i = %d\n",i);        
-    fclose(fptr);
+    file1.close();
 }
 
 void create_lexium(UST uni_sym_tab[1500],trn terminal_table[70],idn identifier_table[50],lit literal_table[50]){
     FILE *fptr = fopen("temp.c","r");
     char temp[100];
+    while (!feof)
+    {
+        /* code */
+    }
+    
     fclose(fptr);
 }
