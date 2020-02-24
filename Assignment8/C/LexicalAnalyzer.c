@@ -10,4 +10,5 @@ int main(){
     printf("LOADING TERMINALS\n");
     load_trn(terminals);
 	tokenize(uni_sym_tab,terminals,identifier_table,literal_table);
+	display(uni_sym_tab,literal_table,identifier_table);
 }
