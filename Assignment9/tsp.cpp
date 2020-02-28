@@ -48,7 +48,9 @@ class tsp{
 
 		// TODO add travelling logic
 		void travel(int source){
-
+			if(this->vertices == 2){
+				
+			}
 		}
 };
 
