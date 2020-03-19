@@ -1,0 +1,5 @@
+PS G:\College\SL5\Assignment10> ./a
+Enter input string :: int id;
+
+
+Parsing successfull!!
