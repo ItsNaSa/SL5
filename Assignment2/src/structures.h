@@ -34,7 +34,7 @@ struct ic{
 	int first;
 	char second[4];
 	int third;
-    char fourth[4];
+  char fourth[4];
 	int fifth;
 	char sixth[4];
 	int seventh;
@@ -170,7 +170,7 @@ int isLiteral(char* curWord)
 		for(i=0;i<len-3;i++)
 		{
 			temp = (int)curWord[i+2];
-			check = isdigit(temp);	
+			check = isdigit(temp);
 			if(check == 0)	//not a numeric character => it is not a literal
 			{
 				return 0;
@@ -253,4 +253,3 @@ void print_pooltab(){
 }
 
 #endif /* STRUCTURES_H_ */
-
