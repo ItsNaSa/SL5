@@ -1,0 +1,51 @@
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ lex calc.l
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ gcc lex.yy.c y.tab.c -w
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ lex calc.l
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ yacc calc.y
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ gcc lex.yy.c y.tab.c -w
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ ./a.out
+
+Enter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Divison, Modulus and Round brackets:
+12+3
+
+ Result = 15
+
+Entered arithmetic expression is Valid
+
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ ./a.out
+
+Enter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Divison, Modulus and Round brackets:
+45/6
+
+ Result = 7
+
+Entered arithmetic expression is Valid
+
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ ./a.out
+
+Enter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Divison, Modulus and Round brackets:
+36/6
+
+ Result = 6
+
+Entered arithmetic expression is Valid
+
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ ./a.out
+
+Enter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Divison, Modulus and Round brackets:
+36*6
+
+ Result = 216
+
+Entered arithmetic expression is Valid
+
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ ./a.out
+
+Enter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Divison, Modulus and Round brackets:
+12+(3*2)
+
+ Result = 18
+
+Entered arithmetic expression is Valid
+
+itsnasa@NaSa-Rig:~/College/SL5/Assignment11$ 
