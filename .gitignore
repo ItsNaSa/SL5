@@ -2,3 +2,5 @@
 *.out
 *.mk
 *.exe
+*.pdf
+*.docx
